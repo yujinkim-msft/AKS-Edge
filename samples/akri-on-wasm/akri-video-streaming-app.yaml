@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: akri-video-streaming-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: akri-video-streaming-app
+  template:
+    metadata:
+      labels:
+        app: akri-video-streaming-app
+    spec:
+      serviceAccountName: akri-video-streaming-app-sa
+      containers:
+      - name: akri-video-streaming-app
+        image: winiotsaleskit.azurecr.io/video-streaming-app:latest-7
+        imagePullPolicy: Always
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: ["ALL"]
+        env:
+        - name: CONFIGURATION_NAME
+          value: akri-onvif
+        - name: WASM_SOURCE_SVC
+          value: "http://<WASM SERVICE IP>:<WASM SERVICE PORT>/upload"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: akri-video-streaming-app
+  namespace: default
+  labels:
+    app: akri-video-streaming-app
+spec:
+  selector:
+    app: akri-video-streaming-app
+  ports:
+  - name: http
+    port: 80
+    targetPort: 5000
+  type: NodePort
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: akri-video-streaming-app-sa
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: akri-video-streaming-app-role
+rules:
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: akri-video-streaming-app-binding
+roleRef:
+  apiGroup: ""
+  kind: ClusterRole
+  name: akri-video-streaming-app-role
+subjects:
+  - kind: ServiceAccount
+    name: akri-video-streaming-app-sa
+    namespace: default
