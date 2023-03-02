@@ -23,7 +23,7 @@ Akri only works on Linux nodes and **containerd-wasm-shim** only supports Linux 
 4. Move to an appropriate working directory
 5. Download [Set-AksEdgeWasmRuntime.ps1](./Set-AksEdgeWasmRuntime.ps1):
     ```powershell
-    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Azure/AKS-Edge/preview/samples/wasm/Set-AksEdgeWasmRuntime.ps1" -OutFile ".\Set-AksEdgeWasmRuntimes.ps1"
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Azure/AKS-Edge/preview/samples/wasm/Set-AksEdgeWasmRuntime.ps1" -OutFile ".\Set-AksEdgeWasmRuntime.ps1"
     Unblock-File -Path ".\Set-AksEdgeWasmRuntime.ps1"
     ```
 6. Run the `Set-AksEdgeWasmRuntime` cmdlet to enable the *containerd-wasm-shim*. We will be using **v0.4.0** for this demo.
@@ -97,7 +97,7 @@ Akri only works on Linux nodes and **containerd-wasm-shim** only supports Linux 
     kubectl apply -f wasm-onnx.yaml
     ```
 
-13. Download the [akri-video-streaming-app.yaml](./akri-video-streaming-app.yaml) and open file. Go to line 30 and edit the value with your own WASM service IP and port (`kubectl get svc` to find this).
+13. Download the [akri-video-streaming-app.yaml](./akri-video-streaming-app.yaml) and open file. Go to line 30 and edit the value with your own WASM service external IP and port (`kubectl get svc` to find this).
 
 14. Save and close the YAML. Then deploy the app:
     ```powershell
